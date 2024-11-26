@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webapi-producer", "webapi-producer\webapi-producer.csproj", "{1BA34B74-4F80-4D1B-BE71-AEAC8CEB4C95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "message-contract", "message-contract\message-contract.csproj", "{7488E915-ABE4-45A8-801E-A1E201F0B0E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console-consumer", "console-consumer\console-consumer.csproj", "{399F1E7E-B9F2-4E40-BD08-1AF0D8F9EFB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{34ACA196-F305-4F48-A0A3-A6548E0D837C}"
+	ProjectSection(SolutionItems) = preProject
+		cli-commands.txt = cli-commands.txt
+		kafka-cluster.yml = kafka-cluster.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1BA34B74-4F80-4D1B-BE71-AEAC8CEB4C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA34B74-4F80-4D1B-BE71-AEAC8CEB4C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA34B74-4F80-4D1B-BE71-AEAC8CEB4C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA34B74-4F80-4D1B-BE71-AEAC8CEB4C95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7488E915-ABE4-45A8-801E-A1E201F0B0E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7488E915-ABE4-45A8-801E-A1E201F0B0E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7488E915-ABE4-45A8-801E-A1E201F0B0E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7488E915-ABE4-45A8-801E-A1E201F0B0E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{399F1E7E-B9F2-4E40-BD08-1AF0D8F9EFB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{399F1E7E-B9F2-4E40-BD08-1AF0D8F9EFB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{399F1E7E-B9F2-4E40-BD08-1AF0D8F9EFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{399F1E7E-B9F2-4E40-BD08-1AF0D8F9EFB3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59135F2F-014B-47C2-A3B1-639A00FDEF6D}
+	EndGlobalSection
+EndGlobal
