@@ -27,13 +27,24 @@ namespace webapi_producer.Services
                 MaxInFlight = 5,
                 MessageSendMaxRetries = 3,
 
+
+
                 //SaslUsername = "<SSAL_USERNAME>",
                 //SaslPassword = "<SSAL_PASSWORD>",
 
                 // Fixed properties
                 SecurityProtocol = SecurityProtocol.Plaintext,//SaslSsl, //Plaintext,SaslPlaintext
                 //SaslMechanism = SaslMechanism.Plain,
-                Acks = Acks.All
+
+
+                EnableDeliveryReports = true, // false = fire & forget
+                Acks = Acks.All, // None - 0, Leader - 1
+                /*
+                 * Other options setting:
+                CompressionType = CompressionType.Gzip,
+                CompressionLevel = 2, // 0-12, def -1 - better compress - higher cpuload
+                LingerMs = 3,
+                */
             };
 
             var producer = new ProducerBuilder<string, MessageContent>(config)
@@ -43,8 +54,11 @@ namespace webapi_producer.Services
             try
             {
 
+                var result = await producer.ProduceAsync(TOPIC, message);
+
+                /* synchronous mode
                 producer.Produce(TOPIC, message,
-                (deliveryReport) =>
+                (deliveryReport) => // this is callbback option
                 {
                     if (deliveryReport.Error.IsError)
                     {
@@ -56,13 +70,14 @@ namespace webapi_producer.Services
                         _logger.LogInformation(producedMessage);
                     }
                 });
+                */
 
                 producer.Flush(TimeSpan.FromSeconds(20));
 
-                return await Task.FromResult(message.Value);
+                return result.Value;
 
             }
-            catch (Exception ex)
+            catch (Exception ex) // ProduceException
             {
                 Debug.WriteLine(ex.Message);
                 throw;

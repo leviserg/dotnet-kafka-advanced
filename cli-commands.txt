@@ -31,3 +31,28 @@ Create topics (using kafdrop on localhost:9000 - Topic ACL / New ):
             describe --status
 
             ... see status, shutdown one of controllers (kafka-1 and/or kafka-2) - check the status change
+
+############### Producer client scalability options ###############
+--- publishing messages modes ---
+1 Synchronous - publish/wait in the same thread/returns acknowledge or fail - Network IO bound ops slow down performance
+2 Asynchronous with No-Check - fire & forget - does not wait for acknowledge
+                 - local producer stores messages in a cache
+                  and then publishes to Kafka in separate thread
+                  client is not blocked, low latency
+                  - cons - possible messages lost when network fail
+3 Asynchronous with Callback - cliant code sends message to local producer, gets a callback function to process results,
+                  in this part client code moves on (not blocked),
+                  producer cache data and then publishes cached messages in separate thread
+                  Low latency / Complex error handling
+---
+Acknowledgement - 0 (No acks - high throuput, no guarantees),
+                  1 - default (ack from leader in replicas) (low throughput in sync mode),
+                  All - all in-sync replicas should receive message (low throughput in sync mode)
+---
+Other options:
+    BUFFER.MEMORY       (Allowed memory for buffering records)
+    COMPRESSION.TYPE    (none, gzip, snappy, lz4, zstd - data compression format for lower payload size)
+    BATCH.SIZE          (Size in bytes to be sent to brocker in batches)
+    LINGER.MS           (time, ms, to wait more messages before sind to broker)
+    
+############### Consumer client scalability options ###############
