@@ -1,9 +1,18 @@
-﻿namespace message_contract
+﻿using Newtonsoft.Json;
+
+namespace message_contract
 {
     public class MessageContent
     {
+        [JsonRequired]
+        [JsonProperty("id")]
         public required string id { get; set; }
+
+        [JsonRequired]
+        [JsonProperty("description")]
         public required string description { get; set; }
+
+        [JsonProperty("price")]
         public decimal? price { get; set; }
 
         public MessageContent()

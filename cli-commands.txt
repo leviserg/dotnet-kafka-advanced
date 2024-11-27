@@ -56,3 +56,52 @@ Other options:
     LINGER.MS           (time, ms, to wait more messages before sind to broker)
     
 ############### Consumer client scalability options ###############
+--- Gropus ---
+- Group Coordinator (Kafka broker in the cluster - keeps track of active consumers by receiving heartbeats
+             - trigger rebalancing when heartbets stop)
+- Group Leader (typ. 1st consumer joined to group, receives info about cur. consumers from group coordinator
+             - allocates partitions to consumers in the group) when goes down - trnasferred to next broker
+
+--- Batching & Polling ---
+Poll Interval
+FETCH.MIN.BYTES             (Def. 1Byte)
+FETCH.MAX.WAIT.MS           (Def. 500ms)
+MAX.PARTITION.FETCH.BYTES   (Def. 1MB)
+
+--- Commit messages ---
+EnableAutoCommit  - does NOT guarantee reliable messages processing:
+        manual commit better: when consumer goes down before message received
+        then this message can be lost because kafka receives commit notification and will never been restored
+
+        manual commit : synchronous & asynchronous
+
+
+AutoCommitIntervalMs (Def. 5000)
+
+############### Best practices notes ###############
+
+--- Partition sizing:
+
+    1 - can not be DEcreased when topic has been created;
+    2 - fewer partitions -> fewer brokers to handle topic + serialized processing  - leads to lags on producers & consumers side
+      + some of brokers & consumers could be starved/overloaded
+    3 - excessive partitions per broker results in idling resources: file handles & memory + number of relications overhead
+    - summary:
+        - plan partition count before creating topics
+        - partition counts >= number of expected consumers in a group
+        - in a cluster use as many brokers as possible (incl. replicas)
+        - number of unique keys in messages > number of partitions (otherwise some partitions will receive no messages) + equally distributed (hash calc)
+        - provide load testing to measure right size of partition (overall peak load, check partition lag)
+
+--- Messages:
+    1 - keep the message size as small as possible (do not include blob - better pass filename)
+    2 - use proper message format (binary preferred like Avro)
+    3 - use schema repository to share message schema
+    4 - use keys for (even distribution in partitions; if you need in ordered messages in partition by key)
+        w/o key Kafka will use round robin distribution around partitions
+
+
+
+
+
+

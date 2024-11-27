@@ -71,6 +71,19 @@ services:
       - "kafka-1"
       - "kafka-2"
 
+  schema-registry:
+    image: bitnami/schema-registry:7.7
+    ports:
+      - '8081:8081'
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+      - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka-1:19092,PLAINTEXT://kafka-2:19093,PLAINTEXT://kafka-3:19094
+
+
   kafdrop:
     image: 'obsidiandynamics/kafdrop:3.32.0-SNAPSHOT'
     restart: "no"

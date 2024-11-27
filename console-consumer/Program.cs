@@ -1,23 +1,40 @@
 ﻿using Confluent.Kafka;
+using Confluent.SchemaRegistry.Serdes;
+using Confluent.SchemaRegistry;
 using message_contract;
+using Confluent.Kafka.SyncOverAsync;
 
 Console.WriteLine("Enter topic you want me to consume or press ENTER to use default topic:");
 const string defaultTopic = "kafka.learning.orders";
 string? selectedTopic = Console.ReadLine();
 string topic = string.IsNullOrEmpty(selectedTopic) ? defaultTopic : selectedTopic;
-
 Console.WriteLine($"Subscribed to topic: {topic}");
+
+var schemaRegistryConfig = new SchemaRegistryConfig
+{
+    Url = "http://localhost:8081"  // URL of your Schema Registry
+};
+
+var schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryConfig);
+var jsonDeserializer = new JsonDeserializer<MessageContent>().AsSyncOverAsync();
+
+
+
 
 var conf = new ConsumerConfig
 {
     GroupId = "kafka-net-consumer",//"test-consumer-group",
     BootstrapServers = "localhost:9092,localhost:9093,localhost:9094",
-    AutoOffsetReset = AutoOffsetReset.Earliest
+    AutoOffsetReset = AutoOffsetReset.Earliest,
+    // Consuming options options for 
+   // EnableAutoCommit = true,
+   // AutoCommitIntervalMs = 1000,
+   // MaxPollIntervalMs = 500,
 };
 
 
 var consumer = new ConsumerBuilder<string, MessageContent>(conf)
-    .SetValueDeserializer(new ByteArrayToJsonDeserializer<MessageContent>())
+    .SetValueDeserializer(jsonDeserializer)
     .Build();
 
 consumer.Subscribe(topic); // can be IEnumerable<string>
@@ -35,7 +52,11 @@ try
     {
         try
         {
+
             var receivedMessage = consumer.Consume(cts.Token);
+
+            consumer.Commit(receivedMessage); // when EnableAutoCommit = false,
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{receivedMessage.Message.Timestamp.UtcDateTime.ToString("HH:mm:ss")} : '{receivedMessage.Message.Value.ToString()}' at: '{receivedMessage.TopicPartitionOffset}'.");
             if (cts.IsCancellationRequested)

@@ -1,4 +1,7 @@
 ﻿using Confluent.Kafka;
+using Confluent.Kafka.SyncOverAsync;
+using Confluent.SchemaRegistry;
+using Confluent.SchemaRegistry.Serdes;
 using message_contract;
 using System.Diagnostics;
 
@@ -17,6 +20,20 @@ namespace webapi_producer.Services
 
         public async Task<MessageContent> SendMessageAsync(Message<string, MessageContent> message)
         {
+            var schemaRegistryConfig = new SchemaRegistryConfig
+            {
+                Url = "http://localhost:8081"  // URL of your Schema Registry
+            };
+
+            /* optional
+            var jsonSerializerConfig = new JsonSerializerConfig
+            {
+                BufferBytes = 100
+            };
+            */
+            var schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryConfig);
+            var jsonSerializer = new JsonSerializer<MessageContent>(schemaRegistry).AsSyncOverAsync();
+
             ProducerConfig config = new ProducerConfig
             {
                 // User-specific properties that you must set
@@ -36,7 +53,6 @@ namespace webapi_producer.Services
                 SecurityProtocol = SecurityProtocol.Plaintext,//SaslSsl, //Plaintext,SaslPlaintext
                 //SaslMechanism = SaslMechanism.Plain,
 
-
                 EnableDeliveryReports = true, // false = fire & forget
                 Acks = Acks.All, // None - 0, Leader - 1
                 /*
@@ -48,7 +64,7 @@ namespace webapi_producer.Services
             };
 
             var producer = new ProducerBuilder<string, MessageContent>(config)
-                .SetValueSerializer(new JsonToByteArraySerializer<MessageContent>())
+                .SetValueSerializer(jsonSerializer)
                 .Build();
 
             try
@@ -72,7 +88,7 @@ namespace webapi_producer.Services
                 });
                 */
 
-                producer.Flush(TimeSpan.FromSeconds(20));
+                producer.Flush(TimeSpan.FromSeconds(5));
 
                 return result.Value;
 
@@ -84,6 +100,7 @@ namespace webapi_producer.Services
             }
             finally
             {
+                schemaRegistry.Dispose();
                 producer.Dispose();
             }
         }
