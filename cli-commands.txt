@@ -94,11 +94,35 @@ AutoCommitIntervalMs (Def. 5000)
         - provide load testing to measure right size of partition (overall peak load, check partition lag)
 
 --- Messages:
+
     1 - keep the message size as small as possible (do not include blob - better pass filename)
     2 - use proper message format (binary preferred like Avro)
     3 - use schema repository to share message schema
     4 - use keys for (even distribution in partitions; if you need in ordered messages in partition by key)
         w/o key Kafka will use round robin distribution around partitions
+
+--- Consumer settings:
+
+    1 - choose right group size (proper to partition number)
+    2 - Choose batching parameters based on use case (right batching can reduce network round trips)
+        - for real time data better to use smaller batch size & polling interval - decrease latency
+    3 - use manual commits to ensure processing reliability (see Consumer scal. options.)
+    4 - use non-blocking processing (async) for higher throughput
+    5 - test for failure conditions (e.g. when consumer or broker going down)
+
+--- Resiliency:
+    
+    1 - use replication to stay with broker failures
+    2 - distribute brokers across diff hardware racks (helps when physical node goes down)
+    3 - use acknowledgements in producer for guaranteed delivery
+    4 - use manual commits on consumer side
+    5 - configure multiple controllers (at least 3 recommended)
+    6 - use mirroring if geo-redundancy is required
+    7 - test resiliency use cases (when nodes go down & recovered)
+
+
+
+
 
 
 
