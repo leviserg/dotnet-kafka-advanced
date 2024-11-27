@@ -22,7 +22,7 @@ namespace message_contract
 
         public override string ToString()
         {
-            return $"{id}\t{description}\t{Math.Round(price.GetValueOrDefault(), 2).ToString()}";
+            return $"{id}\t{description}\t{Math.Round(price.Value, 2).ToString() ?? "null"}";
         }
     }
 }
